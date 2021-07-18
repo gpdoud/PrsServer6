@@ -8,24 +8,24 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace PrsServer6.Models {
-    public class Request {
-        public int Id { get; set; }
-        public string Description { get; set; }
-        public string Justification { get; set; }
-        public string RejectionReason { get; set; }
-        public string DeliveryMode { get; set; } = "Pickup";
-        public string Status { get; set; } = StatusNew;
-        public decimal Total { get; set; }
-
-        public int UserId { get; set; }
+    public record Request (
+        int Id,
+        string Description,
+        string Justification,
+        string RejectionReason,
+        string DeliveryMode = "Pickup",
+        string Status = Request.StatusNew,
+        decimal Total = 0,
+        int UserId = 0
+    ) {
         public virtual User User { get; set; }
 
         public virtual IEnumerable<Requestline> Requestlines { get; set; }
 
-        public static string StatusNew = "NEW";
-        public static string StatusEdit = "EDIT";
-        public static string StatusReview = "REVIEW";
-        public static string StatusApproved = "APPROVED";
-        public static string StatusRejected = "REJECTED";
+        public const string StatusNew = "NEW";
+        public const string StatusEdit = "EDIT";
+        public const string StatusReview = "REVIEW";
+        public const string StatusApproved = "APPROVED";
+        public const string StatusRejected = "REJECTED";
     }
 }

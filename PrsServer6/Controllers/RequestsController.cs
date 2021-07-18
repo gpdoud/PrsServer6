@@ -43,8 +43,8 @@ namespace PrsServer6.Controllers {
             return request;
         }
 
-        // GET: api/Requests/review
-        [HttpGet("{userId}")]
+        // GET: api/Requests/reviews/5
+        [HttpGet("reviews/{userId}")]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequestInReview(int userId) {
             return await _context.Requests
                                     .Include(x => x.User)
@@ -78,23 +78,30 @@ namespace PrsServer6.Controllers {
 
         // PUT: api/Requests/Review/5
         [HttpPut("review/{id}")]
-        public async Task<IActionResult> ReviewRequest(int id, Request request) {
-            request.Status = request.Total <= 50
-                                ? PrsServer6.Models.Request.StatusApproved
-                                : PrsServer6.Models.Request.StatusReview;
-            return await PutRequest(id, request);
+        public async Task<IActionResult> ReviewRequest(int id, Request Request) {
+            /*
+             * Because Request is a record, it is immutable. So to change
+             * the value of Status, a new instance is created using WITH
+             * which allows changes the values of the original instance.
+             */
+            var ApprovedRequest = Request with {
+                Status = Request.Total <= 50
+                                    ? Request.StatusApproved
+                                    : Request.StatusReview
+            };
+            return await PutRequest(id, ApprovedRequest);
         }
         // PUT: api/Requests/Approve/5
         [HttpPut("approve/{id}")]
-        public async Task<IActionResult> ApproveRequest(int id, Request request) {
-            request.Status = PrsServer6.Models.Request.StatusApproved;
-            return await PutRequest(id, request);
+        public async Task<IActionResult> ApproveRequest(int id, Request Request) {
+            var ApprovedRequest = Request with { Status = Request.StatusApproved };
+            return await PutRequest(id, ApprovedRequest);
         }
         // PUT: api/Requests/Reject/5
         [HttpPut("reject/{id}")]
-        public async Task<IActionResult> RejectRequest(int id, Request request) {
-            request.Status = PrsServer6.Models.Request.StatusRejected;
-            return await PutRequest(id, request);
+        public async Task<IActionResult> RejectRequest(int id, Request Request) {
+            var RejectedRequest = Request with { Status = Request.StatusRejected };
+            return await PutRequest(id, RejectedRequest);
         }
 
         // POST: api/Requests

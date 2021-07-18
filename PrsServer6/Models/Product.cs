@@ -4,17 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace PrsServer6.Models {
-    public class Product {
-        public int Id { get; set; }
-        public string PartNbr { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string Unit { get; set; } = "Each";
-        public string PhotoPath { get; set; }
+    public record Product (
 
-        public int VendorId { get; set; }
+        int Id, string PartNbr, string Name,
+        decimal Price, string Unit = "Each", string PhotoPath = null,
+        int VendorId = 0
+
+    ) {
         public virtual Vendor Vendor { get; set; }
-
         public virtual IEnumerable<Requestline> Requestlines { get; set; }
     }
 }

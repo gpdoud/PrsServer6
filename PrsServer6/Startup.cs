@@ -50,8 +50,13 @@ namespace PrsServer6 {
                 endpoints.MapControllers();
             });
 
-            using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            scope.ServiceProvider.GetService<PrsDbContext>().Database.Migrate();
+            using var scope = app.ApplicationServices
+                                 .GetRequiredService<IServiceScopeFactory>()
+                                 .CreateScope();
+
+            scope.ServiceProvider.GetService<PrsDbContext>()
+                                 .Database
+                                 .Migrate();
         }
     }
 }
