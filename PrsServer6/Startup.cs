@@ -21,13 +21,15 @@ namespace PrsServer6 {
 
         public IConfiguration Configuration { get; }
 
+        private string ConnectionStringKey => OperatingSystem.IsWindows() ? "PrsDbContext" : "PrsDbContextDocker";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddControllers();
 
             services.AddDbContext<PrsDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("PrsDbContext")));
+                    options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringKey)));
 
             services.AddCors();
         }
@@ -47,6 +49,9 @@ namespace PrsServer6 {
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
             });
+
+            using var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            scope.ServiceProvider.GetService<PrsDbContext>().Database.Migrate();
         }
     }
 }
